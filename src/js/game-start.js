@@ -12,6 +12,7 @@ const tenthsOfSeconds = document.getElementById('tenthsOfSeconds');
 const finalMsg = document.getElementById('gameResultsText');
 const gameOver = document.getElementById('gameOver');
 const playAgain = document.getElementById('playAgain');
+const leave = document.getElementById('leave');
 const intro = document.getElementById('intro');
 const bestOf3 = document.getElementById('bestOf3');
 const bestOf5 = document.getElementById('bestOf5');
@@ -71,6 +72,8 @@ const checkInputs = () =>{
    let numberRounds;
    
    bestOf5.checked ? numberRounds = 3 : numberRounds = 2;
+
+   console.log('para al llegar a ', numberRounds, 'rounds ganados cualquier de los jugadores ')
    
    const maxTime = document.getElementById('max-time').value;
 
@@ -78,7 +81,6 @@ const checkInputs = () =>{
       errors.push('el tiempo max para la jugada debe ser mayor a cero');
    } else {
       const maxTimeNumeric = parseInt(maxTime)
-      console.log('maxtime', maxTime)
    }
 
    if (errors.length > 0) {
@@ -135,7 +137,7 @@ const makeSelection = (mySelection) =>{
 
    // remainRounds--;
 
-   if (remainRounds === 0) {
+   if (parseInt(yourScore.innerText) >= remainRounds || parseInt(compScore.innerText) >= remainRounds) {
       gameOver.classList.add('gameOver--show');
       if ( parseInt(yourScore.innerText) > parseInt(compScore.innerText) ){
          finalMsg.innerHTML = `You wind, Congratulations <i class="fa fa-smile-o"></i>`;
@@ -152,7 +154,7 @@ const makeSelection = (mySelection) =>{
 }
 
 const addScore = (score) => {
-   remainRounds--;
+  console.log('quedan ', remainRounds, ' rounds')
    score.innerText = parseInt(score.innerText) + 1;
 }
 
@@ -207,6 +209,11 @@ playAgain.addEventListener('click',(e)=>{
    // a.appendChild(b);
    gameOver.classList.remove('gameOver--show')
    intro.classList.add('intro--show');
+})
+
+leave.addEventListener('click',(e)=>{
+      console.log('saliendo');
+      window.close();
 })
 
 function timer(action, remainSeconds) {
