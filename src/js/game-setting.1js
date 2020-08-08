@@ -1,0 +1,45 @@
+// Camptura los parametros del juego
+
+const gameSetting = document.getElementById('form-play')
+let errors = [];
+// const btnSetting = document.getElementById('btn-setting')
+
+gameSetting.addEventListener('submit', (e)=>{
+   e.preventDefault()
+   
+   const gameParameter = checkInputs()
+   
+   if (errors.length > 0) {
+      console.log('hay errores');
+   } else {
+
+      gameStart(parseInt(gameParameter))
+   }
+})
+
+const checkInputs = () =>{
+   errors = [];
+   let i = 0;
+   const numberRounds = document.getElementById('number-rounds').value;
+   const maxTime = document.getElementById('max-time').value;
+
+   if(numberRounds === null || numberRounds === "" || numberRounds === 0 ) {
+      errors.push('el numero de rounds debe ser mayor a cero');
+      i++;
+   } else {
+      const roundsNumeric = parseInt(numberRounds)
+   }
+
+   if(maxTime === null || maxTime === "" || maxTime === 0 ) {
+      errors.push('el tiempo max para la jugada debe ser mayor a cero');
+      i++;
+   } else {
+      const maxTimeNumeric = parseInt(maxTime)
+   }
+
+   if (errors.length > 0) {
+      return false;
+   } else {
+      return {numberRounds, maxTime}
+   }
+}

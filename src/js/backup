@@ -1,0 +1,180 @@
+const selectionBtns = document.querySelectorAll('.selection');
+const lastPlay = document.getElementById('round-result');
+const compScore = document.getElementById('comp-score');
+const yourScore = document.getElementById('your-score');
+const seconds = document.getElementById('seconds');
+const finalMsg = document.getElementById('final-msg');
+const arraySelections = [
+   {
+      name: 'rock',
+      img: 'assets/img/rock.png',
+      beats: ['scissors', 'lizard']
+   },
+   {
+      name: 'scissors',
+      img: 'assets/img/scissors.png',
+      beats: ['paper', 'lizard']
+   },
+   {
+      name: 'paper',
+      img: 'assets/img/paper.png',
+      beats: ['rock', 'spock']
+   },
+   {
+      name: 'spock',
+      img: 'assets/img/spock.png',
+      beats: ['scissors', 'rock']
+   },
+   {
+      name: 'lizard',
+      img: 'assets/img/lizard.png',
+      beats: ['paper', 'spock']
+   }
+   ]
+
+// Camptura los parametros del juego
+
+const gameSetting = document.getElementById('form-play');
+let errors = [];
+// const btnSetting = document.getElementById('btn-setting')
+
+gameSetting.addEventListener('submit', (e)=>{
+   e.preventDefault()
+   
+   const gameParameter = checkInputs()
+   
+   if (errors.length > 0) {
+      console.log('hay errores');
+   } else {
+      gameStart(gameParameter);
+   }
+})
+
+const checkInputs = () =>{
+   errors = [];
+   let i = 0;
+   const numberRounds = document.getElementById('number-rounds').value;
+   const maxTime = document.getElementById('max-time').value;
+
+   if(numberRounds === null || numberRounds === "" || numberRounds === 0 ) {
+      errors.push('el numero de rounds debe ser mayor a cero');
+      i++;
+   } else {
+      const roundsNumeric = parseInt(numberRounds)
+   }
+
+   if(maxTime === null || maxTime === "" || maxTime === 0 ) {
+      errors.push('el tiempo max para la jugada debe ser mayor a cero');
+      i++;
+   } else {
+      const maxTimeNumeric = parseInt(maxTime)
+   }
+
+   if (errors.length > 0) {
+      return false;
+   } else {
+      return {numberRounds, maxTime}
+   }
+}
+
+/* -----------------------------------------------------------------------------------------
+   logica del juego de rock paper  scissors lizard & Spock
+------------------------------------------------------------------------------------------*/
+const gameStart = (parameter) => {
+
+   let remainSeconds = parseInt(parameter.maxTime);
+   let remainRounds = parseInt(parameter.numberRounds);
+
+      // const timerUpdate = setInterval(()=>{
+      //    seconds.innerHTML = `${remainSeconds}`;
+      //    remainSeconds--;
+      //    if(remainSeconds < 1){
+      //       clearInterval(timerUpdate);
+      //       finalMsg.innerHTML = 'You lost, time is over';
+      //       remainRounds = 0;
+      //    }
+      // }, 1000);
+      // while (remainRounds > 0){
+         remainRounds--;
+
+// al hacer click en alguna de la 5 jugadas (imagenes [Rock, Paper, Scissors, Lizard, Spock])
+         selectionBtns.forEach(selectionBtn => {
+            selectionBtn.addEventListener('click', (e) =>{
+               // clearInterval(timerUpdate);
+               const selectionName = e.target.id;
+               const objectSelection = arraySelections.find(selection => selection.name === selectionName)
+               makeSelection(objectSelection);
+            })
+         }) 
+      // }
+
+   // if ( parseInt(yourScore.innerText) > parseInt(compScore.innerText) ){
+   //    finalMsg.innerHTML = 'You wind, Congratulations :)';
+   // } else{
+   //    if ( parseInt(yourScore.innerText) < parseInt(compScore.innerText) ){
+   //       finalMsg.innerHTML = 'You lost, Sorry :(';
+   //    } else{
+   //       finalMsg.innerHTML = 'Tie :(';
+   //    }
+   // }
+}
+
+const makeSelection = (mySelection) =>{
+
+// genera la jugada del computador mediante la generacion de un numero random entre 0 y 4
+   const computerSelection = randomSelection();
+
+// determina si hay un ganador (retorna true si es ganador, si ambos son falso no hay ganador en ese raound)
+   const youWin = isWinner(mySelection, computerSelection);
+   const compWin = isWinner(computerSelection,mySelection);
+
+// muestra en pantalla la jugada de cada jugador e indica el resultado del round
+   showWinner(youWin,compWin)
+   showPlay(computerSelection,compWin);
+   showPlay(mySelection,youWin);
+
+// incrementa el score del ganador (en caso que alguno halla ganado ese round
+   if(youWin) addScore(yourScore);
+   if(compWin) addScore(compScore);
+}
+
+
+const addScore = (score) => {
+   score.innerText = parseInt(score.innerText) + 1;
+}
+
+const showPlay = (selection, winner) => {
+   const currentPlay = document.createElement('div');
+   currentPlay.innerHTML  = `<div class="selection selection--result"><img src="${selection.img}"></div>`;
+ 
+   currentPlay.classList.add('result-selection');
+   if (winner) {
+      currentPlay.classList.add('winner');
+   }
+   lastPlay.after(currentPlay)
+}
+
+const showWinner = (you, compu) => {
+   const resultPlay = document.createElement('div');
+   
+   if (you) {
+      resultPlay.innerHTML  = `<p class="result-selection">You win</p>`;
+   } else {
+      if (compu) {
+         resultPlay.innerHTML  = `<p class="result-selection">You lost</p>`;
+      } else{
+         resultPlay.innerHTML  = `<p class="result-selection"> Tie</p>`;
+      }
+   }
+   lastPlay.after(resultPlay)
+ }
+
+
+const isWinner = (yourSelection, opponentSelection) => {
+   return (yourSelection.beats[0] === opponentSelection.name || yourSelection.beats[1] === opponentSelection.name );
+}
+
+const randomSelection = () => {
+   const computerIndex = Math.floor(Math.random() * arraySelections.length);
+   return arraySelections[computerIndex];
+}
