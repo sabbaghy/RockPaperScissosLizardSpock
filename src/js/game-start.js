@@ -17,6 +17,8 @@ const intro = document.getElementById('intro');
 const bestOf3 = document.getElementById('bestOf3');
 const bestOf5 = document.getElementById('bestOf5');
 const gameSetting = document.getElementById('form-play');
+const msgErrors = document.getElementById('msg-errors');
+
 
 const arraySelections = [
    {
@@ -51,7 +53,7 @@ const arraySelections = [
 let errors = [];
 let timerUpdate;
 let remainSeconds;
-let remainRounds;
+let remainRounds; 
 
 // const btnSetting = document.getElementById('btn-setting')
 
@@ -61,7 +63,11 @@ gameSetting.addEventListener('submit', (e)=>{
    const gameParameter = checkInputs()
    
    if (errors.length > 0) {
-      console.log('hay errores');
+      let errorsList = ''; 
+      errors.forEach(error => {
+         errorsList += `<li>${error}</li>`
+      })
+      msgErrors.innerHTML = errorsList;
    } else {
       gameStart(gameParameter);
    }
@@ -72,9 +78,7 @@ const checkInputs = () =>{
    let numberRounds;
    
    bestOf5.checked ? numberRounds = 3 : numberRounds = 2;
-
-   console.log('para al llegar a ', numberRounds, 'rounds ganados cualquier de los jugadores ')
-   
+   console.log('entro')
    const maxTime = document.getElementById('max-time').value;
 
    if(maxTime === null || maxTime === "" || maxTime === 0 ) {
@@ -154,7 +158,6 @@ const makeSelection = (mySelection) =>{
 }
 
 const addScore = (score) => {
-  console.log('quedan ', remainRounds, ' rounds')
    score.innerText = parseInt(score.innerText) + 1;
 }
 
@@ -212,7 +215,6 @@ playAgain.addEventListener('click',(e)=>{
 })
 
 leave.addEventListener('click',(e)=>{
-      console.log('saliendo');
       window.close();
 })
 

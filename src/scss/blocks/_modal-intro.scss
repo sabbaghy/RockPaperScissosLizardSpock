@@ -27,6 +27,7 @@
    width: 100%;
    color: $txt-clr-light;
 }
+
 .form-data{
    display: flex;
    justify-content: center;
@@ -74,7 +75,7 @@
    }
 
    input{
-      width: 50%;
+      width: 75%;
       height: 1.2rem;
       background: $txt-clr-light;
       border-radius: 6px;
@@ -132,4 +133,12 @@
 
       }
    }
+}
+
+
+.msg-errors {
+   // display: none;
+   font-size: 1.5em;
+   text-align: center;
+   margin: 1em 0;
 }
