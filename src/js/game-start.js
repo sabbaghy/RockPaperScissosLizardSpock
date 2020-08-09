@@ -82,7 +82,7 @@ const checkInputs = () =>{
    const maxTime = document.getElementById('max-time').value;
 
    if(maxTime === null || maxTime === "" || maxTime === 0 ) {
-      errors.push('el tiempo max para la jugada debe ser mayor a cero');
+      errors.push('Time should be greater than 0 and less than 120 seconds');
    } else {
       const maxTimeNumeric = parseInt(maxTime)
    }
