@@ -18,6 +18,7 @@ const bestOf3 = document.getElementById('bestOf3');
 const bestOf5 = document.getElementById('bestOf5');
 const gameSetting = document.getElementById('form-play');
 const msgErrors = document.getElementById('msg-errors');
+let allowPlay = false;
 
 
 const arraySelections = [
@@ -69,6 +70,7 @@ gameSetting.addEventListener('submit', (e)=>{
       })
       msgErrors.innerHTML = errorsList;
    } else {
+      allowPlay = true;
       gameStart(gameParameter);
    }
 })
@@ -78,11 +80,10 @@ const checkInputs = () =>{
    let numberRounds;
    
    bestOf5.checked ? numberRounds = 3 : numberRounds = 2;
-   console.log('entro')
    const maxTime = document.getElementById('max-time').value;
 
-   if(maxTime === null || maxTime === "" || maxTime === 0 ) {
-      errors.push('Time should be greater than 0 and less than 120 seconds');
+   if(maxTime === null || maxTime === "" || maxTime < 3 ) {
+      errors.push('Time should be greater than 2 and less than 120 seconds');
    } else {
       const maxTimeNumeric = parseInt(maxTime)
    }
@@ -111,16 +112,16 @@ const gameStart = (parameter) => {
 // al hacer click en alguna de la 5 jugadas (imagenes [Rock, Paper, Scissors, Lizard, Spock])
    selectionBtns.forEach(selectionBtn => {
       selectionBtn.addEventListener('click', (e) =>{
-         e.preventDefault();
-         const selectionName = e.target.id;
-         const objectSelection = arraySelections.find(selection => selection.name === selectionName)
-         makeSelection(objectSelection);
+         if (allowPlay){
+            const selectionName = e.target.id;
+            const objectSelection = arraySelections.find(selection => selection.name === selectionName)
+            makeSelection(objectSelection);
+         }
       })
    }) 
 }
 
 const makeSelection = (mySelection) =>{
-
 // genera la jugada del computador mediante la generacion de un numero random entre 0 y 4
    const computerSelection = randomSelection();
 
@@ -143,6 +144,7 @@ const makeSelection = (mySelection) =>{
 
    if (parseInt(yourScore.innerText) >= remainRounds || parseInt(compScore.innerText) >= remainRounds) {
       gameOver.classList.add('gameOver--show');
+         allowPlay = false;
       if ( parseInt(yourScore.innerText) > parseInt(compScore.innerText) ){
          finalMsg.innerHTML = `You wind, Congratulations <i class="fa fa-smile-o"></i>`;
       } else{
@@ -168,13 +170,11 @@ const showPlay = (selection, winner) => {
    if (winner) {
       currentPlay.classList.add('winner');
    }
-   // lastPlay.after(currentPlay)
    lastPlay.insertAdjacentElement('afterbegin',currentPlay);
 }
 
 const showWinner = (you, compu) => {
    const resultPlay = document.createElement('div');
-   
    if (you) {
       resultPlay.innerHTML  = `<p class="result-selection">You win</p>`;
    } else {
@@ -184,7 +184,6 @@ const showWinner = (you, compu) => {
          resultPlay.innerHTML  = `<p class="result-selection"> Draw </p>`;
       }
    }
-   // lastPlay.after(resultPlay)
    lastPlay.insertAdjacentElement('afterbegin',resultPlay)
  }
 
@@ -199,19 +198,14 @@ const randomSelection = () => {
 }
 
 playAgain.addEventListener('click',(e)=>{
-   // e.preventDefault()
-   // e.stopPropagation()
-      // location.href = 'index.html';
-      location.reload();
-   // lastPlay.innerHTML = "";
-   // let a  = document.getElementById('results');
+   // intro.classList.add('intro--show')
+   // compScore.innerHTML = '0';
+   // yourScore.innerHTML = '0';
+   // lastPlay.innerHTML = '';
+   // clearInterval(timerUpdate)
 
-   // a.removeChild(a.children[1]);;
-   // const b = document.createElement('div');
-   // b.classList.add('data-results');
-   // a.appendChild(b);
-   gameOver.classList.remove('gameOver--show')
-   intro.classList.add('intro--show');
+   location.reload();
+   // gameOver.classList.remove('gameOver--show')
 })
 
 leave.addEventListener('click',(e)=>{
@@ -232,6 +226,7 @@ function timer(action, remainSeconds) {
          tenthsOfSeconds.innerHTML = `${tenths}`;
          if(time < 1){
             gameOver.classList.add('gameOver--show')
+            allowPlay = false;
             finalMsg.innerHTML = `You lost, time is over <i class="fa fa-frown-o"></i>`;
             clearInterval(timerUpdate)
          }
