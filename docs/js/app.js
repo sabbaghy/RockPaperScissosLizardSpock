@@ -1,1 +1,238 @@
-"use strict";var timerUpdate,remainSeconds,remainRounds,getRemainTime=function(e){var n=new Date,t=(new Date(e)-n+2e3)/1e3,a=("0"+Math.floor(t%60)).slice(-2),r=("0"+Math.floor(t/60%60)).slice(-2),s=("0"+Math.floor(t/3600%24)).slice(-2);return{remainTime:t,remainDays:Math.floor(t/86400),remainHours:s,remainMinutes:r,remainSeconds:a}},countdown=function(e){var n=document.getElementById("hours"),t=document.getElementById("minutes"),a=document.getElementById("seconds"),r=document.getElementById("final-msg"),s=setInterval((function(){var o=getRemainTime(e);n.innerHTML="".concat(o.remainHours),t.innerHTML="".concat(o.remainMinutes),a.innerHTML="".concat(o.remainSeconds),o.remainTime<=1&&(clearInterval(s),r.innerHTML="You lost, time is over")}),1e3)},selectionBtns=document.querySelectorAll(".selection"),main=document.getElementById("main"),lastPlay=document.getElementById("data-results"),compScore=document.getElementById("comp-score"),yourScore=document.getElementById("your-score"),minutes=document.getElementById("minutes"),seconds=document.getElementById("seconds"),tenthsOfSeconds=document.getElementById("tenthsOfSeconds"),finalMsg=document.getElementById("gameResultsText"),gameOver=document.getElementById("gameOver"),playAgain=document.getElementById("playAgain"),leave=document.getElementById("leave"),intro=document.getElementById("intro"),bestOf3=document.getElementById("bestOf3"),bestOf5=document.getElementById("bestOf5"),gameSetting=document.getElementById("form-play"),msgErrors=document.getElementById("msg-errors"),allowPlay=!1,arraySelections=[{name:"rock",img:"assets/img/rock.png",beats:["scissors","lizard"]},{name:"scissors",img:"assets/img/scissors.png",beats:["paper","lizard"]},{name:"paper",img:"assets/img/paper.png",beats:["rock","spock"]},{name:"spock",img:"assets/img/spock.png",beats:["scissors","rock"]},{name:"lizard",img:"assets/img/lizard.png",beats:["paper","spock"]}],errors=[];gameSetting.addEventListener("submit",(function(e){e.preventDefault();var n=checkInputs();if(errors.length>0){var t="";errors.forEach((function(e){t+="<li>".concat(e,"</li>")})),msgErrors.innerHTML=t}else allowPlay=!0,gameStart(n)}));var checkInputs=function(){var e;errors=[],e=bestOf5.checked?3:2;var n=document.getElementById("max-time").value;if(null===n||""===n||n<3)errors.push("Time should be greater than 2 and less than 120 seconds");else parseInt(n);return!(errors.length>0)&&{numberRounds:e,maxTime:n}},gameStart=function(e){intro.classList.remove("intro--show"),compScore.innerHTML="0",yourScore.innerHTML="0",remainSeconds=parseInt(e.maxTime),remainRounds=parseInt(e.numberRounds),timer("start",remainSeconds),selectionBtns.forEach((function(e){e.addEventListener("click",(function(e){if(allowPlay){var n=e.target.id,t=arraySelections.find((function(e){return e.name===n}));makeSelection(t)}}))}))},makeSelection=function(e){var n=randomSelection(),t=isWinner(e,n),a=isWinner(n,e);timer("stop",remainSeconds),showWinner(t,a),showPlay(n,a),showPlay(e,t),t&&addScore(yourScore),a&&addScore(compScore),parseInt(yourScore.innerText)>=remainRounds||parseInt(compScore.innerText)>=remainRounds?(gameOver.classList.add("gameOver--show"),allowPlay=!1,parseInt(yourScore.innerText)>parseInt(compScore.innerText)?finalMsg.innerHTML='You wind, Congratulations <i class="fa fa-smile-o"></i>':parseInt(yourScore.innerText)<parseInt(compScore.innerText)?finalMsg.innerHTML='You lost, Sorry <i class="fa fa-frown-o"></i>':finalMsg.innerHTML='Draw <i class="fa fa-meh-o"></i>'):timer("start",remainSeconds)},addScore=function(e){e.innerText=parseInt(e.innerText)+1},showPlay=function(e,n){var t=document.createElement("DIV");t.innerHTML='<img src="'.concat(e.img,'">'),t.classList.add("selection","selection--result"),n&&t.classList.add("winner"),lastPlay.insertAdjacentElement("afterbegin",t)},showWinner=function(e,n){var t=document.createElement("div");t.innerHTML=e?'<p class="result-selection">You win</p>':n?'<p class="result-selection">You lost</p>':'<p class="result-selection"> Draw </p>',lastPlay.insertAdjacentElement("afterbegin",t)},isWinner=function(e,n){return e.beats[0]===n.name||e.beats[1]===n.name},randomSelection=function(){var e=Math.floor(Math.random()*arraySelections.length);return arraySelections[e]};function timer(e,n){if("start"===e){var t=10*n;timerUpdate=setInterval((function(){t-=1;var e=("0"+Math.floor(t/600)).slice(-2),n=("0"+Math.floor(t/10%60)).slice(-2),a=Math.floor(t%10);minutes.innerHTML="".concat(e),seconds.innerHTML="".concat(n),tenthsOfSeconds.innerHTML="".concat(a),t<1&&(gameOver.classList.add("gameOver--show"),allowPlay=!1,finalMsg.innerHTML='You lost, time is over <i class="fa fa-frown-o"></i>',clearInterval(timerUpdate))}),100)}"stop"===e&&clearInterval(timerUpdate)}playAgain.addEventListener("click",(function(e){location.reload()})),leave.addEventListener("click",(function(e){window.close()}));var mainNav=document.getElementById("nav__links"),toggleMenu=document.getElementById("toggle-menu"),navList=document.getElementById("nav__list"),navItems=document.querySelectorAll(".nav__item"),navLenght=navItems.length,menuOpen=!1;toggleMenu.addEventListener("click",(function(){mainNav.classList.toggle("show-menu"),toggleMenu.classList.toggle("open"),menuOpen=!menuOpen})),navItems.forEach((function(e){e.addEventListener("click",(function(){navList.querySelector(".nav__item--active").classList.remove("nav__item--active"),e.classList.add("nav__item--active"),menuOpen&&(mainNav.classList.toggle("show-menu"),toggleMenu.classList.toggle("open"),menuOpen=!1)}))}));
+/* -----------------------------------------------------------------------------------------
+   logica del juego de rock paper  scissors lizard & Spock
+------------------------------------------------------------------------------------------*/
+const selectionBtns = document.getElementById('selections');
+const main = document.getElementById('main');
+const lastPlay = document.getElementById('data-results');
+const compScore = document.getElementById('comp-score');
+const yourScore = document.getElementById('your-score');
+const minutes = document.getElementById('minutes');
+const seconds = document.getElementById('seconds');
+const tenthsOfSeconds = document.getElementById('tenthsOfSeconds');
+const finalMsg = document.getElementById('gameResultsText');
+const gameOver = document.getElementById('gameOver');
+const playAgain = document.getElementById('playAgain');
+const leave = document.getElementById('leave');
+const intro = document.getElementById('intro');
+const bestOf3 = document.getElementById('bestOf3');
+const bestOf5 = document.getElementById('bestOf5');
+const gameSetting = document.getElementById('form-play');
+const msgErrors = document.getElementById('msg-errors');
+let allowPlay = false;
+
+
+const arraySelections = [
+   {
+      name: 'rock',
+      img: 'assets/img/rock.png',
+      beats: ['scissors', 'lizard']
+   },
+   {
+      name: 'scissors',
+      img: 'assets/img/scissors.png',
+      beats: ['paper', 'lizard']
+   },
+   {
+      name: 'paper',
+      img: 'assets/img/paper.png',
+      beats: ['rock', 'spock']
+   },
+   {
+      name: 'spock',
+      img: 'assets/img/spock.png',
+      beats: ['scissors', 'rock']
+   },
+   {
+      name: 'lizard',
+      img: 'assets/img/lizard.png',
+      beats: ['paper', 'spock']
+   }
+   ]
+
+// Camptura los parametros del juego
+
+let errors = [];
+let timerUpdate;
+let remainSeconds;
+let remainRounds; 
+
+// const btnSetting = document.getElementById('btn-setting')
+
+gameSetting.addEventListener('submit', (e)=>{
+   e.preventDefault()
+   
+   const gameParameter = checkInputs()
+   
+   if (errors.length > 0) {
+      let errorsList = ''; 
+      errors.forEach(error => {
+         errorsList += `<li>${error}</li>`
+      })
+      msgErrors.innerHTML = errorsList;
+   } else {
+      allowPlay = true;
+      gameStart(gameParameter);
+   }
+})
+
+const checkInputs = () =>{
+   errors = [];
+   let numberRounds;
+   
+   bestOf5.checked ? numberRounds = 3 : numberRounds = 2;
+   const maxTime = document.getElementById('max-time').value;
+
+   if(maxTime === null || maxTime === "" || maxTime < 3 ) {
+      errors.push('Time should be greater than 2 and less than 120 seconds');
+   } else {
+      const maxTimeNumeric = parseInt(maxTime)
+   }
+
+   if (errors.length > 0) {
+      return false;
+   } else {
+      return {numberRounds, maxTime}
+   }
+}
+
+/* -----------------------------------------------------------------------------------------
+   logica del juego de rock paper  scissors lizard & Spock
+------------------------------------------------------------------------------------------*/
+const gameStart = (parameter) => {
+
+   intro.classList.remove('intro--show')
+   compScore.innerHTML = '0';
+   yourScore.innerHTML = '0';
+
+   remainSeconds = parseInt(parameter.maxTime);
+   remainRounds = parseInt(parameter.numberRounds);
+
+   timer('start', remainSeconds);
+
+// al hacer click en alguna de la 5 jugadas (imagenes [Rock, Paper, Scissors, Lizard, Spock])
+      selectionBtns.addEventListener('click', (e) => {
+      if (allowPlay){
+         const selectionName = e.target.id;
+         const objectSelection = arraySelections.find(selection => selection.name === selectionName)
+         makeSelection(objectSelection);
+      }
+   })
+}
+
+const makeSelection = (mySelection) =>{
+// genera la jugada del computador mediante la generacion de un numero random entre 0 y 4
+   const computerSelection = randomSelection();
+
+// determina si hay un ganador (retorna true si es ganador, si ambos son falso no hay ganador en ese raound)
+   const youWin = isWinner(mySelection, computerSelection);
+   const compWin = isWinner(computerSelection,mySelection);
+
+   timer('stop', remainSeconds);
+
+// muestra en pantalla la jugada de cada jugador e indica el resultado del round
+   showWinner(youWin,compWin)
+   showPlay(computerSelection,compWin);
+   showPlay(mySelection,youWin);
+
+// incrementa el score del ganador (en caso que alguno halla ganado ese round
+   if(youWin) addScore(yourScore);
+   if(compWin) addScore(compScore);
+
+   // remainRounds--;
+
+   if (parseInt(yourScore.innerText) >= remainRounds || parseInt(compScore.innerText) >= remainRounds) {
+      gameOver.classList.add('gameOver--show');
+         allowPlay = false;
+      if ( parseInt(yourScore.innerText) > parseInt(compScore.innerText) ){
+         finalMsg.innerHTML = `You wind, Congratulations <i class="fa fa-smile-o"></i>`;
+      } else{
+         if ( parseInt(yourScore.innerText) < parseInt(compScore.innerText) ){
+            finalMsg.innerHTML = `You lost, Sorry <i class="fa fa-frown-o"></i>`;
+         } else{
+            finalMsg.innerHTML = `Draw <i class="fa fa-meh-o"></i>`;
+         }
+      }
+   } else {
+      timer('start', remainSeconds);
+   }
+}
+
+const addScore = (score) => {
+   score.innerText = parseInt(score.innerText) + 1;
+}
+
+const showPlay = (selection, winner) => {
+   const currentPlay = document.createElement('DIV');
+   currentPlay.innerHTML  = `<img src="${selection.img}">`;
+   currentPlay.classList.add("selection","selection--result");
+   if (winner) {
+      currentPlay.classList.add('winner');
+   }
+   lastPlay.insertAdjacentElement('afterbegin',currentPlay);
+}
+
+const showWinner = (you, compu) => {
+   const resultPlay = document.createElement('div');
+   if (you) {
+      resultPlay.innerHTML  = `<p class="result-selection">You win</p>`;
+   } else {
+      if (compu) {
+         resultPlay.innerHTML  = `<p class="result-selection">You lost</p>`;
+      } else{
+         resultPlay.innerHTML  = `<p class="result-selection"> Draw </p>`;
+      }
+   }
+   lastPlay.insertAdjacentElement('afterbegin',resultPlay)
+ }
+
+
+const isWinner = (yourSelection, opponentSelection) => {
+   return (yourSelection.beats[0] === opponentSelection.name || yourSelection.beats[1] === opponentSelection.name );
+}
+
+const randomSelection = () => {
+   const computerIndex = Math.floor(Math.random() * arraySelections.length);
+   return arraySelections[computerIndex];
+}
+
+playAgain.addEventListener('click',(e)=>{
+   intro.classList.add('intro--show')
+   compScore.innerHTML = '0';
+   yourScore.innerHTML = '0';
+   lastPlay.innerHTML = '';
+   clearInterval(timerUpdate)
+   allowPlay = false;
+
+   // location.reload();
+   gameOver.classList.remove('gameOver--show')
+})
+
+leave.addEventListener('click',(e)=>{
+      window.close();
+})
+
+function timer(action, remainSeconds) {
+   if(action === 'start'){
+      let time = remainSeconds * 10;
+
+      timerUpdate = setInterval(()=>{
+         time -= 1;
+         const min = ('0' + Math.floor(time / 600)).slice(-2);
+         const sec = ('0' + Math.floor((time / 10) % 60)).slice(-2);
+         const tenths = Math.floor((time) % 10);
+         minutes.innerHTML = `${min}`;
+         seconds.innerHTML = `${sec}`;
+         tenthsOfSeconds.innerHTML = `${tenths}`;
+         if(time < 1){
+            gameOver.classList.add('gameOver--show')
+            allowPlay = false;
+            finalMsg.innerHTML = `You lost, time is over <i class="fa fa-frown-o"></i>`;
+            clearInterval(timerUpdate)
+         }
+      }, 100);
+
+   }
+   if (action === 'stop'){
+      clearInterval(timerUpdate)
+   }
+}

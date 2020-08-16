@@ -1,7 +1,7 @@
 /* -----------------------------------------------------------------------------------------
    logica del juego de rock paper  scissors lizard & Spock
 ------------------------------------------------------------------------------------------*/
-const selectionBtns = document.querySelectorAll('.selection');
+const selectionBtns = document.getElementById('selections');
 const main = document.getElementById('main');
 const lastPlay = document.getElementById('data-results');
 const compScore = document.getElementById('comp-score');
@@ -110,15 +110,13 @@ const gameStart = (parameter) => {
    timer('start', remainSeconds);
 
 // al hacer click en alguna de la 5 jugadas (imagenes [Rock, Paper, Scissors, Lizard, Spock])
-   selectionBtns.forEach(selectionBtn => {
-      selectionBtn.addEventListener('click', (e) =>{
-         if (allowPlay){
-            const selectionName = e.target.id;
-            const objectSelection = arraySelections.find(selection => selection.name === selectionName)
-            makeSelection(objectSelection);
-         }
-      })
-   }) 
+      selectionBtns.addEventListener('click', (e) => {
+      if (allowPlay){
+         const selectionName = e.target.id;
+         const objectSelection = arraySelections.find(selection => selection.name === selectionName)
+         makeSelection(objectSelection);
+      }
+   })
 }
 
 const makeSelection = (mySelection) =>{
@@ -198,14 +196,15 @@ const randomSelection = () => {
 }
 
 playAgain.addEventListener('click',(e)=>{
-   // intro.classList.add('intro--show')
-   // compScore.innerHTML = '0';
-   // yourScore.innerHTML = '0';
-   // lastPlay.innerHTML = '';
-   // clearInterval(timerUpdate)
+   intro.classList.add('intro--show')
+   compScore.innerHTML = '0';
+   yourScore.innerHTML = '0';
+   lastPlay.innerHTML = '';
+   clearInterval(timerUpdate)
+   allowPlay = false;
 
-   location.reload();
-   // gameOver.classList.remove('gameOver--show')
+   // location.reload();
+   gameOver.classList.remove('gameOver--show')
 })
 
 leave.addEventListener('click',(e)=>{
