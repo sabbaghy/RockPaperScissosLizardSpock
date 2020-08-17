@@ -20,7 +20,6 @@ const gameSetting = document.getElementById('form-play');
 const msgErrors = document.getElementById('msg-errors');
 let allowPlay = false;
 
-
 const arraySelections = [
    {
       name: 'rock',
@@ -49,31 +48,12 @@ const arraySelections = [
    }
    ]
 
-// Camptura los parametros del juego
-
 let errors = [];
 let timerUpdate;
 let remainSeconds;
 let remainRounds; 
 
 // const btnSetting = document.getElementById('btn-setting')
-
-gameSetting.addEventListener('submit', (e)=>{
-   e.preventDefault()
-   
-   const gameParameter = checkInputs()
-   
-   if (errors.length > 0) {
-      let errorsList = ''; 
-      errors.forEach(error => {
-         errorsList += `<li>${error}</li>`
-      })
-      msgErrors.innerHTML = errorsList;
-   } else {
-      allowPlay = true;
-      gameStart(gameParameter);
-   }
-})
 
 const checkInputs = () =>{
    errors = [];
@@ -108,15 +88,6 @@ const gameStart = (parameter) => {
    remainRounds = parseInt(parameter.numberRounds);
 
    timer('start', remainSeconds);
-
-// al hacer click en alguna de la 5 jugadas (imagenes [Rock, Paper, Scissors, Lizard, Spock])
-      selectionBtns.addEventListener('click', (e) => {
-      if (allowPlay){
-         const selectionName = e.target.id;
-         const objectSelection = arraySelections.find(selection => selection.name === selectionName)
-         makeSelection(objectSelection);
-      }
-   })
 }
 
 const makeSelection = (mySelection) =>{
@@ -185,7 +156,6 @@ const showWinner = (you, compu) => {
    lastPlay.insertAdjacentElement('afterbegin',resultPlay)
  }
 
-
 const isWinner = (yourSelection, opponentSelection) => {
    return (yourSelection.beats[0] === opponentSelection.name || yourSelection.beats[1] === opponentSelection.name );
 }
@@ -195,28 +165,12 @@ const randomSelection = () => {
    return arraySelections[computerIndex];
 }
 
-playAgain.addEventListener('click',(e)=>{
-   intro.classList.add('intro--show')
-   compScore.innerHTML = '0';
-   yourScore.innerHTML = '0';
-   lastPlay.innerHTML = '';
-   clearInterval(timerUpdate)
-   allowPlay = false;
-
-   // location.reload();
-   gameOver.classList.remove('gameOver--show')
-})
-
-leave.addEventListener('click',(e)=>{
-      window.close();
-})
-
 function timer(action, remainSeconds) {
    if(action === 'start'){
       let time = remainSeconds * 10;
 
       timerUpdate = setInterval(()=>{
-         time -= 1;
+         time --;
          const min = ('0' + Math.floor(time / 600)).slice(-2);
          const sec = ('0' + Math.floor((time / 10) % 60)).slice(-2);
          const tenths = Math.floor((time) % 10);
@@ -236,3 +190,45 @@ function timer(action, remainSeconds) {
       clearInterval(timerUpdate)
    }
 }
+
+gameSetting.addEventListener('submit', (e)=>{
+   e.preventDefault()
+   
+   const gameParameter = checkInputs()
+   
+   if (errors.length > 0) {
+      let errorsList = ''; 
+      errors.forEach(error => {
+         errorsList += `<li>${error}</li>`
+      })
+      msgErrors.innerHTML = errorsList;
+   } else {
+      allowPlay = true;
+      gameStart(gameParameter);
+   }
+})
+
+playAgain.addEventListener('click',(e)=>{
+   intro.classList.add('intro--show')
+   compScore.innerHTML = '0';
+   yourScore.innerHTML = '0';
+   lastPlay.innerHTML = '';
+   clearInterval(timerUpdate)
+   allowPlay = false;
+
+   // location.reload();
+   gameOver.classList.remove('gameOver--show')
+})
+
+leave.addEventListener('click',(e)=>{
+      window.close();
+})
+
+// al hacer click en alguna de la 5 jugadas (imagenes [Rock, Paper, Scissors, Lizard, Spock])
+selectionBtns.addEventListener('click', (e) => {
+   if (allowPlay){
+      const selectionName = e.target.id;
+      const objectSelection = arraySelections.find(selection => selection.name === selectionName)
+      makeSelection(objectSelection);
+   }
+})
