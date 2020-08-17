@@ -81,8 +81,8 @@ const checkInputs = () =>{
 const gameStart = (parameter) => {
 
    intro.classList.remove('intro--show')
-   compScore.innerHTML = '0';
-   yourScore.innerHTML = '0';
+   compScore.textContent = '0';
+   yourScore.textContent = '0';
 
    remainSeconds = parseInt(parameter.maxTime);
    remainRounds = parseInt(parameter.numberRounds);
@@ -174,9 +174,9 @@ function timer(action, remainSeconds) {
          const min = ('0' + Math.floor(time / 600)).slice(-2);
          const sec = ('0' + Math.floor((time / 10) % 60)).slice(-2);
          const tenths = Math.floor((time) % 10);
-         minutes.innerHTML = `${min}`;
-         seconds.innerHTML = `${sec}`;
-         tenthsOfSeconds.innerHTML = `${tenths}`;
+         minutes.textContent = `${min}`;
+         seconds.textContent = `${sec}`;
+         tenthsOfSeconds.textContent = `${tenths}`;
          if(time < 1){
             gameOver.classList.add('gameOver--show')
             allowPlay = false;
@@ -209,9 +209,9 @@ gameSetting.addEventListener('submit', (e)=>{
 })
 
 playAgain.addEventListener('click',(e)=>{
-   intro.classList.add('intro--show')
-   compScore.innerHTML = '0';
-   yourScore.innerHTML = '0';
+   intro.classList.add('intro--show');
+   compScore.textContent = '0';
+   yourScore.textContent = '0';
    lastPlay.innerHTML = '';
    clearInterval(timerUpdate)
    allowPlay = false;
